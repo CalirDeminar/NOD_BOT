@@ -20,6 +20,7 @@ def get_corp_current_month_stats(name):
     :return: Statistics string to be displayed
     """
     # construct Zkill Stat query
+    print("Getting Corp Current Month Stats")
     kb_url = ("https://zkillboard.com/api/stats/corporationID/" +
              Esi.get_corp_id(name) + "/w-space/year/" +
              str(datetime.date.today().year) + "/month/" +
@@ -58,6 +59,7 @@ def get_killer_summary(name, list_range):
     :param list_range: The maximum size of the returned list
     :return: Statistics string to be displayed
     """
+    print("Getting Corp Killer Summary")
     id_set = []
     corp_id = Esi.get_corp_id(name)
     # construct Zkill Stat query

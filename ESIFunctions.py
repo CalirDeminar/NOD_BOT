@@ -10,6 +10,7 @@ def get_corp_id(name):
     :param name: The full corp name, or corp ticker, to be searched for
     :return: The corp_id for the specified corp
     """
+    print("Getting Corp ID")
     fixed_name = name.replace(" ", "%20")
     # lookup corp ID from ESI
     look_up_url = "https://esi.evetech.net/latest/search/?categories=corporation&datasource=tranquility&" + \
@@ -28,6 +29,7 @@ def get_char_id(name):
     :return: The character_id for the specified character
     """
     try:
+        print("Getting Char ID")
         fixed_name = name.replace(" ", "%20")
         # lookup corp ID from ESI
         look_up_url = "https://esi.evetech.net/latest/search/?categories=character&datasource=tranquility&" + \
