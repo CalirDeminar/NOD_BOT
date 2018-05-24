@@ -1,11 +1,10 @@
-import json
-import urllib.request
+import re
 
 url = "https://esi.evetech.net/latest/characters/96167789/notifications/?datasource=tranquility"
 
 # store zkill stat result
-kb_sum = urllib.request.urlopen(url)
+#kb_sum = urllib.request.urlopen(url)
 
 # convert zkill output
-data = json.loads(kb_sum.read().decode())
-print(data)
+#data = json.loads(kb_sum.read().decode())
+print(re.escape("-MND-"))

@@ -11,7 +11,8 @@ def get_corp_id(name):
     :return: The corp_id for the specified corp
     """
     print("Getting Corp ID")
-    fixed_name = name.replace(" ", "%20")
+    fixed_name = (name.replace(" ", "%20")).replace("-", "%2D")
+    print(fixed_name)
     # lookup corp ID from ESI
     look_up_url = "https://esi.evetech.net/latest/search/?categories=corporation&datasource=tranquility&" + \
                   "language=en-us&search=" + fixed_name + "&strict=true"

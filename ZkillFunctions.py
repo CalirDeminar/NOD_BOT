@@ -1,5 +1,6 @@
 import datetime
 import json
+import math
 import operator
 import urllib.request
 from collections import defaultdict
@@ -7,7 +8,7 @@ from collections import defaultdict
 import ESIFunctions as Esi
 
 
-def get_corp_current_month_stats(name):
+def get_corp_current_month_stats(name, corp_id):
     """
     Calculates the total number of corp member kills and value of said corp's kills within the current month.
     Retrieves the kill history for the current month and calculates total kills and total worth of said kills
@@ -17,18 +18,18 @@ def get_corp_current_month_stats(name):
         final-blow kills only - to limit kill-whoring skewing results
 
     :param name: The full corp name or corp ticker, to look up
+    :param corp_id:
     :return: Statistics string to be displayed
     """
     # construct Zkill Stat query
     try:
         print("Getting Corp Current Month Stats")
         kb_url = ("https://zkillboard.com/api/stats/corporationID/" +
-                 Esi.get_corp_id(name) + "/w-space/year/" +
-                 str(datetime.date.today().year) + "/month/" +
-                 str(datetime.date.today().month) + "/kills/finalblow-only/")
+                  corp_id + "/w-space/year/" +
+                  str(datetime.date.today().year) + "/month/" +
+                  str(datetime.date.today().month) + "/kills/finalblow-only/")
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
-
         # convert zkill output
         data = json.loads(kb_sum.read().decode())
         # initialise counters
@@ -42,12 +43,12 @@ def get_corp_current_month_stats(name):
             total_kills += 1
 
         return ("__**" + name + ":**__   __Total Kills:__ " + str(total_kills) +
-                "   __Total Isk Killed:__ " + '{0:,.2f}'.format(total_isk) + " isk")
+                "   __Total Isk Killed:__ " + '{0:,.2f}'.format(total_isk) + " isk\n")
     except TypeError:
         return "**LookUp Error**"
 
 
-def get_killer_summary(list_range, name):
+def get_killer_summary(list_range, name, corp_id):
     """
     Generates a list of the top "list_range" ships used in PvP by the specified corp.
     The kill history of a corp is requested from zkillboard, for the current year
@@ -58,21 +59,20 @@ def get_killer_summary(list_range, name):
     This is done via a frequency table constructed from attackers on each kill-mail, with a check that each pilot
     is within the target corporation
 
-    :param name: The full corp name or corp ticker, to look up
     :param list_range: The maximum size of the returned list
+    :param name: The full corp name or corp ticker, to look up
+    :param corp_id:
     :return: Statistics string to be displayed
     """
     try:
         print("Getting Corp Killer Summary")
         id_set = []
-        corp_id = Esi.get_corp_id(name)
         # construct Zkill Stat query
         kb_url = ("https://zkillboard.com/api/stats/corporationID/" + corp_id + "/w-space/year/"
                   + str(datetime.date.today().year) + "/kills/")
 
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
-
         # convert zkill output
         data = json.loads(kb_sum.read().decode())
 
@@ -123,3 +123,53 @@ def get_killer_summary(list_range, name):
         return output
     except TypeError:
         return "**LookUp Error**"
+
+
+def get_fleet_size_stats(name, corp_id):
+    print("Getting Fleet Size Stats")
+    try:
+        # construct Zkill Stat query
+        kb_url = ("https://zkillboard.com/api/stats/corporationID/" + corp_id + "/w-space/year/"
+                  + str(datetime.date.today().year) + "/kills/")
+
+        # store zkill stat result
+        kb_sum = urllib.request.urlopen(kb_url)
+        # convert zkill output
+        data = json.loads(kb_sum.read().decode())
+
+        avg_total = 0
+        total_kills = 0
+        max_k = 0
+        min_k = math.inf
+
+        for i in data:  # for every kill
+            current_total = 0
+            third_pty = 0
+            for j in i["attackers"]:  # for every attacker
+                try:
+                    if int(j["corporation_id"]) == int(corp_id):  # increment only if attack is of target corp
+                        current_total += 1
+                    else:  # otherwise increment non-corp attacker counter
+                        third_pty += 1
+                except KeyError:
+                    print("KeyError")
+            if current_total > third_pty:  # ignore any kill with more non-corp attackers, than corp attacks
+                if current_total > max_k:  # check and set new max fleet size
+                    max_k = current_total
+                elif current_total < min_k:  # check and set new min fleet size
+                    min_k = current_total
+
+                avg_total += current_total  # add to running total for mean fleet size
+                total_kills += 1
+
+        avg = avg_total / total_kills  # calculate mean fleet size
+
+        output = "__**Fleet Statistics:**__\n"
+        output += "__Maximum Fleet Size:__  " + str(max_k) + "\n"
+        output += "__Minimum Fleet Size:__  " + str(min_k) + "\n"
+        output += "__Average Fleet Size:__  " + str('{0:,.2f}'.format(avg)) + "\n"
+        output += "__Sample Size:__ " + str(total_kills) + "\n"
+        return output
+    except KeyError:
+        return "**LookUp Error**"
+
