@@ -2,6 +2,7 @@ from discord.ext import commands
 
 import BotFunctions as bf
 import ESIFunctions as Esi
+import FuzzworksFunctions as Fzw
 import ZkillFunctions as Zkbf
 
 token = 'NDQ4ODU2MTExNjcyNTkwMzQ3.Decl9w.3O1LF-B8UAxZGWupqPSYSiMJiMo'
@@ -47,6 +48,11 @@ async def intel(*, a):
     output += Zkbf.get_fleet_size_stats(a, c_id) + "\n"
     output += Zkbf.get_killer_summary(5, a, c_id) + "\n"
     await bot.say(output)
+
+
+@bot.command()
+async def pc(*, a):
+    await bot.say(Fzw.get_item_value(a))
 
 
 @bot.command()

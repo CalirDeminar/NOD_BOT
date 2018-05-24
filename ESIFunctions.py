@@ -63,3 +63,17 @@ def get_ship_name(ship_id):
     except urllib.error.URLError:
         return "Ship Not Found"
 
+
+def get_item_id(name):
+    try:
+        fixed_name = name.replace(" ", "%20")
+        look_up_url = "https://esi.evetech.net/latest/search/?categories=inventory_type&" +\
+                      "datasource=tranquility&language=en-us&search=" + fixed_name + "&strict=true"
+        search_res = urllib.request.urlopen(look_up_url)
+        data = json.loads(search_res.read().decode())
+        return str((data["inventory_type"])).lstrip("[").rstrip("]")
+
+    except urllib.error.HTTPError:
+        return "Item Not Found"
+    except urllib.error.URLError:
+        return "Item Not Found"
