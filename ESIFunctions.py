@@ -14,8 +14,13 @@ def get_corp_id(name):
     fixed_name = (name.replace(" ", "%20")).replace("-", "%2D")
     print(fixed_name)
     # lookup corp ID from ESI
-    look_up_url = "https://esi.evetech.net/latest/search/?categories=corporation&datasource=tranquility&" + \
-                  "language=en-us&search=" + fixed_name + "&strict=true"
+    look_up_url = "https://esi.evetech.net/latest/" \
+                  "search/" \
+                  "?categories=corporation&" \
+                  "datasource=tranquility&" + \
+                  "language=en-us&" \
+                  "search=" + fixed_name + \
+                  "&strict=true"
     # store lookup result
     search_res = urllib.request.urlopen(look_up_url)
     # strip square brackets and store as string
@@ -33,8 +38,12 @@ def get_char_id(name):
         print("Getting Char ID")
         fixed_name = name.replace(" ", "%20")
         # lookup corp ID from ESI
-        look_up_url = "https://esi.evetech.net/latest/search/?categories=character&datasource=tranquility&" + \
-                      "language=en-us&search=" + fixed_name + "&strict=true"
+        look_up_url = "https://esi.evetech.net/latest/" \
+                      "search/" \
+                      "?categories=character&" \
+                      "datasource=tranquility&" \
+                      "language=en-us&search=" + fixed_name + \
+                      "&strict=true"
         # store lookup result
         search_res = urllib.request.urlopen(look_up_url)
         # strip square brackets and store as string
@@ -53,8 +62,11 @@ def get_ship_name(ship_id):
     :return: The name of the ship_id specified
     """
     try:
-        look_up_url = "https://esi.evetech.net/latest/universe/types/" + str(ship_id) +\
-                      "/?datasource=tranquility&language=en-us"
+        look_up_url = "https://esi.evetech.net/latest/" \
+                      "universe/" \
+                      "types/" + str(ship_id) + \
+                      "/?datasource=tranquility&" \
+                      "language=en-us"
         search_res = urllib.request.urlopen(look_up_url)
         data = json.loads(search_res.read().decode())
         return data["name"]
@@ -65,10 +77,16 @@ def get_ship_name(ship_id):
 
 
 def get_item_id(name):
+
+    fixed_name = name.replace(" ", "%20")
+    look_up_url = "https://esi.evetech.net/latest/" \
+                  "search/" \
+                  "?categories=inventory_type&" +\
+                  "datasource=tranquility&" \
+                  "language=en-us&" \
+                  "search=" + fixed_name + \
+                  "&strict=true"
     try:
-        fixed_name = name.replace(" ", "%20")
-        look_up_url = "https://esi.evetech.net/latest/search/?categories=inventory_type&" +\
-                      "datasource=tranquility&language=en-us&search=" + fixed_name + "&strict=true"
         search_res = urllib.request.urlopen(look_up_url)
         data = json.loads(search_res.read().decode())
         return str((data["inventory_type"])).lstrip("[").rstrip("]")

@@ -56,6 +56,13 @@ async def pc(*, a):
 
 
 @bot.command()
+async def fit(ship: str, *, corp):
+    c_id = Esi.get_corp_id(corp)
+    s_id = Esi.get_item_id(ship)
+    await bot.say(corp+ "'s " + ship + ": " + Zkbf.get_last_fit(s_id, c_id))
+
+
+@bot.command()
 async def commands():
     print("printing commands")
 
@@ -70,12 +77,18 @@ async def commands():
                                  "2 ESI lookups, 1 Zkill lookup")
 
     out += bf.const_command_text("stats X",
-                                 "Poke Calir to fill this in at some point\n" +
+                                 "Retrieve fleet size statistics for corp **X**\n" +
                                  "1 ESI lookup, 1 Zkill lookup")
 
+    out + bf.const_command_text("fit X Y",
+                                "Retrieve the last killmail of ship X from corp Y\n" +
+                                "2 ESI lookups, 1 Zkill lookup")
+
     out += bf.const_command_text("intel X",
-                                 "Poke Calir to fill this in at some point\n" +
+                                 "Combined command to call: kills, stats and ships commands\n" +
                                  "2 ESI lookups, 3 Zkill lookups")
+
+    out += bf.const_command_text("pc X", "Price check item X at Jita 4-4\n1 ESI lookup, 1 Fuzzworks lookup")
 
     await bot.say(out)
 

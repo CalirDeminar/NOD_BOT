@@ -24,10 +24,12 @@ def get_corp_current_month_stats(name, corp_id):
     # construct Zkill Stat query
     try:
         print("Getting Corp Current Month Stats")
-        kb_url = ("https://zkillboard.com/api/stats/corporationID/" +
-                  corp_id + "/w-space/year/" +
-                  str(datetime.date.today().year) + "/month/" +
-                  str(datetime.date.today().month) + "/kills/finalblow-only/")
+        kb_url = "https://zkillboard.com/api/stats/" \
+                 "corporationID/" + corp_id + \
+                 "/w-space/" \
+                 "year/" + str(datetime.date.today().year) + \
+                 "/month/" + str(datetime.date.today().month) + \
+                 "/kills/finalblow-only/"
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
         # convert zkill output
@@ -42,8 +44,11 @@ def get_corp_current_month_stats(name, corp_id):
             # increment totalKill counter
             total_kills += 1
 
-        return ("__**" + name + ":**__   __Total Kills:__ " + str(total_kills) +
-                "   __Total Isk Killed:__ " + '{0:,.2f}'.format(total_isk) + " isk\n")
+        return "__**" + name + \
+               ":**__   __Total Kills:__ " + str(total_kills) + \
+               "   __Total Isk Killed:__ " + '{0:,.2f}'.format(total_isk) + \
+               " isk\n"
+
     except TypeError:
         return "**LookUp Error**"
 
@@ -68,8 +73,10 @@ def get_killer_summary(list_range, name, corp_id):
         print("Getting Corp Killer Summary")
         id_set = []
         # construct Zkill Stat query
-        kb_url = ("https://zkillboard.com/api/stats/corporationID/" + corp_id + "/w-space/year/"
-                  + str(datetime.date.today().year) + "/kills/")
+        kb_url = "https://zkillboard.com/api/stats/" + \
+                 "corporationID/" + corp_id + "/w-space/year/" + \
+                 str(datetime.date.today().year) + \
+                 "/kills/"
 
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
@@ -115,12 +122,13 @@ def get_killer_summary(list_range, name, corp_id):
             del freq_table[current_id]
 
         # add output header
-        output = "__**" + name + " - PvP Ship Summary:**__\n"
+        output = "__**" + name + \
+                 " - PvP Ship Summary:**__\n"
         # construct output string
         for i in range(len(ship_ids)):
             output += str(Esi.get_ship_name(ship_ids[i])) + ": " + str(ship_count[i]) + "\n"
-
         return output
+
     except TypeError:
         return "**LookUp Error**"
 
@@ -129,8 +137,11 @@ def get_fleet_size_stats(name, corp_id):
     print("Getting Fleet Size Stats")
     try:
         # construct Zkill Stat query
-        kb_url = ("https://zkillboard.com/api/stats/corporationID/" + corp_id + "/w-space/year/"
-                  + str(datetime.date.today().year) + "/kills/")
+        kb_url = "https://zkillboard.com/api/stats/" + \
+                 "corporationID/" + corp_id + \
+                 "/w-space/" + \
+                 "year/" + str(datetime.date.today().year) + \
+                 "/kills/"
 
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
@@ -172,4 +183,21 @@ def get_fleet_size_stats(name, corp_id):
         return output
     except KeyError:
         return "**LookUp Error**"
+
+
+def get_last_fit(ship, corp_id):
+    print("getting corp's ship fit")
+    # construct Zkill Stat query
+    kb_url = "https://zkillboard.com/api/stats/" + \
+             "corporationID/" + corp_id + \
+             "/w-space/" + \
+             "year/" + str(datetime.date.today().year) + \
+             "/losses/ship/" + ship+ "/"
+
+    # store zkill stat result
+    kb_sum = urllib.request.urlopen(kb_url)
+    # convert zkill output
+    data = json.loads(kb_sum.read().decode())
+    kill_id = data[0]["killmail_id"]
+    return "https://zkillboard.com/kill/" + str(kill_id) + "/"
 
