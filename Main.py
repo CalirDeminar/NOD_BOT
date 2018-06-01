@@ -9,6 +9,12 @@ token = 'NDQ4ODU2MTExNjcyNTkwMzQ3.Decl9w.3O1LF-B8UAxZGWupqPSYSiMJiMo'
 bot = commands.Bot(command_prefix='!')
 
 
+#async def fuel_counting():
+#    await bot.wait_until_ready
+#    channel = discord.Object(id='449651065051283476')
+#    while not bot.is_closed:
+
+
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -76,13 +82,13 @@ async def commands():
                                  " list of ships used this year by corp **Y** seen as attackers on killmails\n" +
                                  "2 ESI lookups, 1 Zkill lookup")
 
+    out + bf.const_command_text("fit X Y",
+                                "Retrieve the last killmail of ship **X** from corp **Y**\n" +
+                                "2 ESI lookups, 1 Zkill lookup")
+
     out += bf.const_command_text("stats X",
                                  "Retrieve fleet size statistics for corp **X**\n" +
                                  "1 ESI lookup, 1 Zkill lookup")
-
-    out + bf.const_command_text("fit X Y",
-                                "Retrieve the last killmail of ship X from corp Y\n" +
-                                "2 ESI lookups, 1 Zkill lookup")
 
     out += bf.const_command_text("intel X",
                                  "Combined command to call: kills, stats and ships commands\n" +
