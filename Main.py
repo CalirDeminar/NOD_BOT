@@ -62,10 +62,15 @@ async def pc(*, a):
 
 
 @bot.command()
+async def fuel():
+    await bot.say(Fzw.get_fuel_prices())
+
+
+@bot.command()
 async def fit(ship: str, *, corp):
     c_id = Esi.get_corp_id(corp)
     s_id = Esi.get_item_id(ship)
-    await bot.say(corp+ "'s " + ship + ": " + Zkbf.get_last_fit(s_id, c_id))
+    await bot.say(corp + "'s " + ship + ": " + Zkbf.get_last_fit(s_id, c_id))
 
 
 @bot.command()
