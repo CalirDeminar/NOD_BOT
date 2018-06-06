@@ -38,9 +38,9 @@ def get_item_value(name):
 
 
 def get_fuel_prices():
-    output = "**Fuel Prices:**\n"
+    output = "**__Fuel Prices:__**\n"
     for hubName, hID in HUB.items():
-        output += hubName + ":\n"
+        output += "**" + hubName + ":**\n"
         for fuelName, fID in fuel.items():
             look_up_url = "https://market.fuzzwork.co.uk/aggregates/?" + \
                           "region=" + hID + "&" \
@@ -48,7 +48,7 @@ def get_fuel_prices():
             search_res = urllib.request.urlopen(look_up_url)
             data = json.loads(search_res.read().decode())
 
-            output += "     " + fuelName + ":\n"
+            output += "     __" + fuelName + ":__\n"
             output += "         Buy: "
             output += str('{0:,.2f}'.format(float(data[fID]["buy"]["weightedAverage"])))
 
