@@ -102,7 +102,7 @@ async def listStructures():
 
 @bot.command()
 async def updateFuel(name: str, amount):
-    fuel_tracker.update_fuel(name, amount)
+    await bot.say(fuel_tracker.update_fuel(name, amount))
 
 
 @bot.command()
