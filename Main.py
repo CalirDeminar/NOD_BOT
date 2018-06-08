@@ -1,47 +1,26 @@
 import asyncio
-import datetime
 
 import discord
 from discord.ext import commands
 
 import BotFunctions as bf
 import ESIFunctions as Esi
+import FuelTracker
 import FuzzworksFunctions as Fzw
 import ZkillFunctions as Zkbf
 
 token = 'NDQ4ODU2MTExNjcyNTkwMzQ3.Decl9w.3O1LF-B8UAxZGWupqPSYSiMJiMo'
 bot = commands.Bot(command_prefix='!')
 
-structures = {}
-fuelTimers = {}
+fuel_tracker = FuelTracker.FuelTracker()
 
 
-#generate fuel Report
-def fuelStatus():
-    output = ""
-    now = datetime.datetime.now()
-    for i in fuelTimers:
-        temp = fuelTimers[i]
-        output += "**" + i + ":** "
-        delta = temp - now
-        if delta.days < 1:
-            output += "__Sub 1 Day of Fuel__: " + str(delta)[:8] + " remaining"
-        else:
-            output += "Days Remaining: " + str(delta.days) + "\n\n"
-    return output
-
-#async def fuel_counting():
-#    await bot.wait_until_ready
-#    channel = discord.Object(id='449651065051283476')
-#    while not bot.is_closed:
-
-
-#background fuel checker
+# background fuel checker
 async def fuelAlert():
     await bot.wait_until_ready()
     channel = discord.Object(id='449651065051283476')
     while not bot.is_closed():
-        output = fuelStatus()
+        output = fuel_tracker.fuel_status()
         bot.send_message(channel, output)
         await asyncio.sleep(3600)
 
@@ -108,54 +87,33 @@ async def fit(ship: str, *, corp):
 
 @bot.command()
 async def addStructure(name: str, consumption):
-    if name not in structures:
-        structures[name] = int(consumption)
-        await bot.say("Structure: " + name + " added")
-    else:
-        await bot.say("This Structure already exists")
+    await bot.say(fuel_tracker.add_structure(name, consumption))
 
 
 @bot.command()
 async def updateStructure(name: str, consumption):
-    if name in structures:
-        structures[name] = int(consumption)
-        await bot.say("Structure: " + name + " updated")
-    else:
-        await bot.say("This structure does not exist")
+    await bot.say(fuel_tracker.update_structure(name, consumption))
 
 
 @bot.command()
 async def listStructures():
-    output = ""
-    for i in structures:
-        output += i + ": " + str(structures[i]) + "\n"
-    await bot.say(output)
+    await bot.say(fuel_tracker.list_structures())
 
 
 @bot.command()
-async def addFuel(name: str, amount):
-    if name in structures:
-        daysRemaining = int(amount) / structures[name]
-        now = datetime.datetime.now()
-        unFueled = now + datetime.timedelta(days=daysRemaining)
-        fuelTimers[name] = unFueled
-        await bot.say("Structure: " + str(name) + "- Fuel level updated")
-    else:
-        await bot.say("This structure does not exist")
+async def updateFuel(name: str, amount):
+    fuel_tracker.update_fuel(name, amount)
 
 
 @bot.command()
 async def fuelReport():
-    await bot.say(fuelStatus())
+    await bot.say(fuel_tracker.fuel_status())
 
 
 @bot.command()
 async def setUp():
-    structures["astra"] = int(180)
-    daysRemaining = int(100) / structures["astra"]
-    now = datetime.datetime.now()
-    unFueled = now + datetime.timedelta(days=daysRemaining)
-    fuelTimers["astra"] = unFueled
+    fuel_tracker.add_structure("astra", 180)
+    fuel_tracker.add_structure("fort", 320)
 
 
 @bot.command()

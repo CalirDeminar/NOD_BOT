@@ -2,6 +2,7 @@ import datetime
 import json
 import math
 import operator
+import urllib.error
 import urllib.request
 from collections import defaultdict
 
@@ -51,6 +52,8 @@ def get_corp_current_month_stats(name, corp_id):
 
     except TypeError:
         return "**LookUp Error**"
+    except urllib.error.HTTPError:
+        return "Zkill Not Responding"
 
 
 def get_killer_summary(list_range, name, corp_id):
@@ -74,8 +77,9 @@ def get_killer_summary(list_range, name, corp_id):
         id_set = []
         # construct Zkill Stat query
         kb_url = "https://zkillboard.com/api/stats/" + \
-                 "corporationID/" + corp_id + "/w-space/year/" + \
-                 str(datetime.date.today().year) + \
+                 "corporationID/" + corp_id + \
+                 "/w-space/" + \
+                 "year/" + str(datetime.date.today().year) + \
                  "/kills/"
 
         # store zkill stat result
@@ -131,9 +135,23 @@ def get_killer_summary(list_range, name, corp_id):
 
     except TypeError:
         return "**LookUp Error**"
+    except urllib.error.HTTPError:
+        return "Zkill Not Responding"
 
 
 def get_fleet_size_stats(name, corp_id):
+    """
+    Calculates fleet size statistics for a specified corp ID
+    Checks number of specified corp_members of each corp kill
+    Corp kills are discarded if < 50% of attackers on killmail are not from specified corp
+
+    Calculates Max, Min and Avg fleet sizes of target corp
+
+
+    :param name: Corp name to be contained in output string (passed so ESI doesnt have to be called)
+    :param corp_id: Corp ID to be processed (passed so ESI doesnt have to be called)
+    :return: Output String to be displayed
+    """
     print("Getting Fleet Size Stats")
     try:
         # construct Zkill Stat query
@@ -183,21 +201,34 @@ def get_fleet_size_stats(name, corp_id):
         return output
     except KeyError:
         return "**LookUp Error**"
+    except urllib.error.HTTPError:
+        return "Zkill Not Responding"
 
 
 def get_last_fit(ship, corp_id):
-    print("getting corp's ship fit")
-    # construct Zkill Stat query
-    kb_url = "https://zkillboard.com/api/stats/" + \
-             "corporationID/" + corp_id + \
-             "/w-space/" + \
-             "year/" + str(datetime.date.today().year) + \
-             "/losses/ship/" + ship+ "/"
+    """
+    Generate a zkillboard link to the last of the specified ship from the specified corp
+    :param ship: Name of ship to search for
+    :param corp_id: Corp to limit search within
+    :return: Zkillboard killmail URL
+    """
+    try:
+        print("getting corp's ship fit")
+        # construct Zkill Stat query
+        kb_url = "https://zkillboard.com/api/stats/" + \
+                 "corporationID/" + corp_id + \
+                 "/w-space/" + \
+                 "year/" + str(datetime.date.today().year) + \
+                 "/losses/ship/" + ship + "/"
 
-    # store zkill stat result
-    kb_sum = urllib.request.urlopen(kb_url)
-    # convert zkill output
-    data = json.loads(kb_sum.read().decode())
-    kill_id = data[0]["killmail_id"]
-    return "https://zkillboard.com/kill/" + str(kill_id) + "/"
+        # store zkill stat result
+        kb_sum = urllib.request.urlopen(kb_url)
+        # convert zkill output
+        data = json.loads(kb_sum.read().decode())
+        kill_id = data[0]["killmail_id"]
+        return "https://zkillboard.com/kill/" + str(kill_id) + "/"
+    except KeyError:
+        return "**LookUp Error**"
+    except urllib.error.HTTPError:
+        return "Zkill Not Responding"
 
