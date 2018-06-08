@@ -143,5 +143,5 @@ async def commands():
 
     await bot.say(out)
 
-
-bot.run(token)
+while True:
+    bot.run(token)

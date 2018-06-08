@@ -1,10 +1,12 @@
 import datetime
 
-
 class FuelTracker:
 
     structures = {}  # list tracking structure name and structure consumption rate
     fuelTimers = {}  # list tracking structure name and fuel run out datetime
+
+    def __init__(self):
+        self.read_from_file()
 
     def add_structure(self, name: str, consumption):
         """
@@ -17,6 +19,8 @@ class FuelTracker:
         try:
             if name not in self.structures:
                 self.structures[name] = int(consumption)
+
+                self.write_to_file()
                 return "Structure: " + name + " added"
             else:
                 return "This Structure already exists"
@@ -34,6 +38,8 @@ class FuelTracker:
         try:
             if name in self.structures:
                 self.structures[name] = int(consumption)
+
+                self.write_to_file()
                 return "Structure: " + name + " updated"
             else:
                 return "This structure does not exist"
@@ -67,6 +73,8 @@ class FuelTracker:
                 now = datetime.datetime.now()
                 un_fueled = now + datetime.timedelta(days=days_remaining)
                 self.fuelTimers[name] = un_fueled
+
+                self.write_to_file()
                 return "Structure: " + str(name) + "- Fuel level updated"
             else:
                 return "This structure does not exist"
@@ -88,4 +96,31 @@ class FuelTracker:
                 output += "__Sub 1 Day of Fuel__: " + str(delta)[:8] + " remaining"
             else:
                 output += "Days Remaining: " + str(delta.days) + "\n\n"
-        return output
+        if output == "":
+            return "No structures Exist"
+        else:
+            return output
+
+    def read_from_file(self):
+        file = open("Data/FuelData", "r")
+        for line in file:
+            contents = line.split("#")
+            temp_name = contents[0]
+            self.structures[temp_name] = int(contents[1])
+            self.fuelTimers[temp_name] = datetime.datetime.strptime(contents[2],'%Y-%m-%d %H:%M:%S.%f')
+        file.close()
+
+    def write_to_file(self):
+        output = ""
+        file = open("Data/FuelData", "w")
+        for i in self.structures:
+            try:
+                output += str(i) + "#"
+                output += str(self.structures[i]) + "#"
+                output += str(self.fuelTimers[i]) + "#\n"
+            except KeyError:
+                print(self.structures)
+                print(self.fuelTimers)
+                print("Redundant Entry?")
+        file.write(output)
+        file.close()
