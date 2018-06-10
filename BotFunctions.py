@@ -27,5 +27,5 @@ def get_ranked_isk_killed():
         rankings[temp] = c
 
     for k in sorted(rankings, reverse=True):
-        output += outputs[rankings[k]]
+        output += outputs[rankings[k]] + "\n"
     return output
