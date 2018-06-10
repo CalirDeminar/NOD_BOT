@@ -55,6 +55,10 @@ async def stats(*, a):
     await bot.say(Zkbf.get_fleet_size_stats(a, c_id))
 
 
+async def rankings():
+    await bot.say(bf.get_ranked_isk_killed())
+
+
 @bot.command()
 async def intel(*, a):
     c_id = Esi.get_corp_id(a)
@@ -123,6 +127,9 @@ async def commands():
     out = bf.const_command_text("kills X",
                                 "Retrieve the total isk killed in wormholes by corp **X**" +
                                 " Enter the full corp name, or corp ticker")
+
+    out += bf.const_command_text("rankings",
+                                 "Get listing of familiar corps kill totals this month")
 
     out += bf.const_command_text("ships X Y",
                                  "Retrieve the top ***X***" +
