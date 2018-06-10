@@ -55,6 +55,7 @@ async def stats(*, a):
     await bot.say(Zkbf.get_fleet_size_stats(a, c_id))
 
 
+@bot.command()
 async def rankings():
     await bot.say(bf.get_ranked_isk_killed())
 
