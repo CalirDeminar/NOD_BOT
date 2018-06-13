@@ -42,7 +42,7 @@ async def ping():
 
 @bot.command()
 async def upTime():
-    await bot.say("Online for: " + str(online_time - datetime.datetime.now()))
+    await bot.say("Online for: " + str(datetime.datetime.now() - online_time))
 
 
 @bot.command()
