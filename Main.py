@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 
 import discord
 from discord.ext import commands
@@ -14,6 +15,7 @@ bot = commands.Bot(command_prefix='!')
 
 fuel_tracker = FuelTracker.FuelTracker()
 
+online_time = datetime.datetime.now()
 
 # background fuel checker
 async def fuelAlert():
@@ -23,6 +25,7 @@ async def fuelAlert():
         output = fuel_tracker.fuel_status()
         bot.send_message(channel, output)
         await asyncio.sleep(3600)
+
 
 @bot.event
 async def on_ready():
@@ -35,6 +38,11 @@ async def on_ready():
 @bot.command()
 async def ping():
     await bot.say("pong")
+
+
+@bot.command()
+async def upTime():
+    await bot.say("Online for: " + str(online_time - datetime.datetime.now()))
 
 
 @bot.command()
