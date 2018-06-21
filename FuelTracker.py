@@ -53,8 +53,8 @@ class FuelTracker:
         :return: List of structures and consumption rates in format of: "structure name": "structure consumption rate"
         """
         output = ""
-        for i in self.structures:
-            output += i + ": " + str(self.structures[i]) + "\n"
+        for structure in self.structures:
+            output += structure + ": " + str(self.structures[structure]) + "\n"
         return output
 
     def update_fuel(self, name: str, amount):
@@ -88,9 +88,9 @@ class FuelTracker:
         """
         output = ""
         now = datetime.datetime.now()
-        for i in self.fuelTimers:
-            temp = self.fuelTimers[i]
-            output += "**" + i + ":** "
+        for fuel_timer in self.fuelTimers:
+            temp = self.fuelTimers[fuel_timer]
+            output += "**" + fuel_timer + ":** "
             delta = temp - now
             if delta.days < 1:
                 output += "__Sub 1 Day of Fuel__: " + str(delta)[:8] + " remaining"
@@ -113,11 +113,11 @@ class FuelTracker:
     def write_to_file(self):
         output = ""
         file = open("Data/FuelData", "w")
-        for i in self.structures:
+        for structure in self.structures:
             try:
-                output += str(i) + "#"
-                output += str(self.structures[i]) + "#"
-                output += str(self.fuelTimers[i]) + "#\n"
+                output += str(structure) + "#"
+                output += str(self.structures[structure]) + "#"
+                output += str(self.fuelTimers[structure]) + "#\n"
             except KeyError:
                 print(self.structures)
                 print(self.fuelTimers)

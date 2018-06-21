@@ -1,3 +1,5 @@
+import re
+
 import ESIFunctions
 import ZkillFunctions
 
@@ -17,15 +19,15 @@ def get_ranked_isk_killed():
 
     rankings = {}
     outputs = {}
-    for c in corp_list:
-        c_id = ESIFunctions.get_corp_id(c)
-        temp = ZkillFunctions.get_corp_current_month_stats(c, c_id)
-        outputs[str(c)] = str(temp)
-        i = temp.find("Killed:__ ")
-        j = temp.find(" isk")
-        temp = temp[i+10:j]
-        rankings[temp] = c
+    for corp_name in corp_list:
+        c_id = ESIFunctions.get_corp_id(corp_name)
+        temp = ZkillFunctions.get_corp_current_month_stats(corp_name, c_id)
+        outputs[str(corp_name)] = str(temp)
+        sub_string_start = temp.find("Killed:__ ")
+        sub_string_end = temp.find(" isk")
+        temp = float(re.sub(',', '', temp[sub_string_start+10:sub_string_end]))
+        rankings[temp] = corp_name
 
-    for k in sorted(rankings, reverse=True):
-        output += outputs[rankings[k]] + "\n"
+    for item in sorted(rankings, reverse=True):
+        output += outputs[rankings[item]] + "\n"
     return output

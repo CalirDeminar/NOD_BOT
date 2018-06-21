@@ -39,9 +39,9 @@ def get_corp_current_month_stats(name, corp_id):
         total_isk = 0
         total_kills = 0
         # for every kill in output
-        for i in data:
+        for kill in data:
             # add value of zkb object, totalValue to total
-            total_isk += i["zkb"]["totalValue"]
+            total_isk += kill["zkb"]["totalValue"]
             # increment totalKill counter
             total_kills += 1
 
@@ -88,21 +88,21 @@ def get_killer_summary(list_range, name, corp_id):
         data = json.loads(kb_sum.read().decode())
 
         # for every kill in output
-        for i in data:
+        for kill in data:
             # for every attacker
-            for j in i["attackers"]:
+            for attacker in kill["attackers"]:
                 try:
                     # check that attacker belongs to target corp
-                    if int(j["corporation_id"]) == int(corp_id):
-                        id_set.append(j['ship_type_id'])
+                    if int(attacker["corporation_id"]) == int(corp_id):
+                        id_set.append(attacker['ship_type_id'])
                 except KeyError:
                     print("KeyError")
 
         # print(id_set)
         freq_table = defaultdict(int)
         # for every type of ship in ship list
-        for i in id_set:
-            freq_table[i] += 1
+        for ship_id in id_set:
+            freq_table[ship_id] += 1
 
         # construct matching arrays of ship IDs and Ship Frequencies
         ship_ids = []
@@ -171,12 +171,12 @@ def get_fleet_size_stats(name, corp_id):
         max_k = 0
         min_k = math.inf
 
-        for i in data:  # for every kill
+        for kill in data:  # for every kill
             current_total = 0
             third_pty = 0
-            for j in i["attackers"]:  # for every attacker
+            for attacker in kill["attackers"]:  # for every attacker
                 try:
-                    if int(j["corporation_id"]) == int(corp_id):  # increment only if attack is of target corp
+                    if int(attacker["corporation_id"]) == int(corp_id):  # increment only if attack is of target corp
                         current_total += 1
                     else:  # otherwise increment non-corp attacker counter
                         third_pty += 1
