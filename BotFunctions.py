@@ -4,11 +4,12 @@ import ESIFunctions
 import ZkillFunctions
 
 
-def const_command_text(title, description):
-    return "__**!" + title + "**__\n" + description + "\n\n"
-
-
 def get_ranked_isk_killed():
+    """
+    Get amount of isk killed by list of corps
+    Sort list of corps by amount killed
+    :return: ordered string of corps and amount killed this month, to display
+    """
     corp_list = ["Mass Collapse",
                  "Nothing On D",
                  "Interstellar Nuclear Penguins",

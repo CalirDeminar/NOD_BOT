@@ -65,7 +65,7 @@ class FuelTracker:
 
         :param name: Identifier of structure to update
         :param amount: Amount of fuel in fuel bay of specified structure
-        :return:  Satus of the fuel update
+        :return:  Status of the fuel update
         """
         try:
             if name in self.structures:
@@ -102,6 +102,10 @@ class FuelTracker:
             return output
 
     def read_from_file(self):
+        """
+        Update structures and structure fueled dates from file
+        :return: void
+        """
         file = open("Data/FuelData", "r")
         for line in file:
             contents = line.split("#")
@@ -111,6 +115,10 @@ class FuelTracker:
         file.close()
 
     def write_to_file(self):
+        """
+        Write current set of structures, consumption rates and fueled dates to file
+        :return: void
+        """
         output = ""
         file = open("Data/FuelData", "w")
         for structure in self.structures:

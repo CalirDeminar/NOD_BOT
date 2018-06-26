@@ -17,10 +17,11 @@ fuel_tracker = FuelTracker.FuelTracker()
 
 online_time = datetime.datetime.now()
 
+channel = discord.Object(id='449651065051283476')
+
 # background fuel checker
 async def fuelAlert():
     await bot.wait_until_ready()
-    channel = discord.Object(id='449651065051283476')
     while not bot.is_closed():
         output = fuel_tracker.fuel_status()
         bot.send_message(channel, output)
@@ -129,35 +130,12 @@ async def setUp():
     fuel_tracker.add_structure("fort", 320)
 
 
-@bot.command()
-async def commands():
-    print("printing commands")
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        print("error")
+        bot.send_message(channel, "Command Not Found")
+        return
 
-    out = bf.const_command_text("kills X",
-                                "Retrieve the total isk killed in wormholes by corp **X**" +
-                                " Enter the full corp name, or corp ticker")
 
-    out += bf.const_command_text("rankings",
-                                 "Get listing of familiar corps kill totals this month")
-
-    out += bf.const_command_text("ships X Y",
-                                 "Retrieve the top ***X***" +
-                                 " list of ships used this year by corp **Y** seen as attackers on killmails")
-
-    out += bf.const_command_text("fit X Y",
-                                 "Retrieve the last killmail of ship **X** from corp **Y**")
-
-    out += bf.const_command_text("stats X",
-                                 "Retrieve fleet size statistics for corp **X**")
-
-    out += bf.const_command_text("intel X",
-                                 "Combined command to call: kills, stats and ships commands")
-
-    out += bf.const_command_text("pc X", "Price check item X at Jita 4-4\n1 ESI lookup, 1 Fuzzworks lookup")
-
-    out += bf.const_command_text("fuel", "Gets prices of all fuel blocks from amarr and jita")
-
-    await bot.say(out)
-
-while True:
-    bot.run(token)
+bot.run(token)

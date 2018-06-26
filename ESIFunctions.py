@@ -83,7 +83,11 @@ def get_ship_name(ship_id):
 
 
 def get_item_id(name):
-
+    """
+    Retrieves item ID for an item name
+    :param name: name of item ID to be retrieved
+    :return: ID of item name requested
+    """
     fixed_name = name.replace(" ", "%20")
     look_up_url = "https://esi.evetech.net/latest/" \
                   "search/" \
