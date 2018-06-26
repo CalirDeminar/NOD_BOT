@@ -23,6 +23,7 @@ def get_corp_current_month_stats(name, corp_id):
     :return: Statistics string to be displayed
     """
     # construct Zkill Stat query
+
     try:
         print("Getting Corp Current Month Stats")
         kb_url = "https://zkillboard.com/api/stats/" \

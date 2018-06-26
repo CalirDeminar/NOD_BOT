@@ -19,6 +19,7 @@ online_time = datetime.datetime.now()
 
 channel = discord.Object(id='449651065051283476')
 
+
 # background fuel checker
 async def fuelAlert():
     await bot.wait_until_ready()
@@ -45,23 +46,40 @@ async def ping():
 async def upTime():
     await bot.say("Online for: " + str(datetime.datetime.now() - online_time))
 
-
-@bot.command()
-async def kills(*, a):
-    c_id = Esi.get_corp_id(a)
-    await bot.say(Zkbf.get_corp_current_month_stats(a, c_id))
+# zkill related functions
 
 
 @bot.command()
-async def ships(a: int, *, b):
-    c_id = Esi.get_corp_id(b)
-    await bot.say(Zkbf.get_killer_summary(a, b, c_id))
+async def kills(*, corp_name):
+    try:
+        c_id = Esi.get_corp_id(corp_name)
+        await bot.say(Zkbf.get_corp_current_month_stats(corp_name, c_id))
+    except Esi.urllib.error.HTTPError:
+        await bot.say("ESI Not Responding")
+    except (Esi.urllib.error.URLError, KeyError):
+        await bot.say("Corp Not Found")
 
 
 @bot.command()
-async def stats(*, a):
-    c_id = Esi.get_corp_id(a)
-    await bot.say(Zkbf.get_fleet_size_stats(a, c_id))
+async def ships(amount: int, *, corp_name):
+    try:
+        c_id = Esi.get_corp_id(corp_name)
+        await bot.say(Zkbf.get_killer_summary(amount, corp_name, c_id))
+    except Esi.urllib.error.HTTPError:
+        await bot.say("ESI Not Responding")
+    except (Esi.urllib.error.URLError, KeyError):
+        await bot.say("Corp Not Found")
+
+
+@bot.command()
+async def stats(*, corp_name):
+    try:
+        c_id = Esi.get_corp_id(corp_name)
+        await bot.say(Zkbf.get_fleet_size_stats(corp_name, c_id))
+    except Esi.urllib.error.HTTPError:
+        await bot.say("ESI Not Responding")
+    except (Esi.urllib.error.URLError, KeyError):
+        await bot.say("Corp Not Found")
 
 
 @bot.command()
@@ -70,13 +88,33 @@ async def rankings():
 
 
 @bot.command()
-async def intel(*, a):
-    c_id = Esi.get_corp_id(a)
-    output = ""
-    output += Zkbf.get_corp_current_month_stats(a, c_id) + "\n"
-    output += Zkbf.get_fleet_size_stats(a, c_id) + "\n"
-    output += Zkbf.get_killer_summary(5, a, c_id) + "\n"
-    await bot.say(output)
+async def intel(*, corp_name):
+    try:
+        c_id = Esi.get_corp_id(corp_name)
+        output = ""
+        output += Zkbf.get_corp_current_month_stats(corp_name, c_id) + "\n"
+        output += Zkbf.get_fleet_size_stats(corp_name, c_id) + "\n"
+        output += Zkbf.get_killer_summary(5, corp_name, c_id) + "\n"
+        await bot.say(output)
+    except Esi.urllib.error.HTTPError:
+        await bot.say("ESI Not Responding")
+    except (Esi.urllib.error.URLError, KeyError):
+        await bot.say("Corp Not Found")
+
+
+@bot.command()
+async def fit(ship: str, *, corp):
+    try:
+        c_id = Esi.get_corp_id(corp)
+        s_id = Esi.get_item_id(ship)
+        await bot.say(corp + "'s " + ship + ": " + Zkbf.get_last_fit(s_id, c_id))
+    except Esi.urllib.error.HTTPError:
+        await bot.say("ESI Not Responding")
+    except (Esi.urllib.error.URLError, KeyError):
+        await bot.say("Corp or Ship Not Found")
+
+
+# market functions
 
 
 @bot.command()
@@ -87,14 +125,6 @@ async def pc(*, a):
 @bot.command()
 async def fuel():
     await bot.say(Fzw.get_fuel_prices())
-
-
-@bot.command()
-async def fit(ship: str, *, corp):
-    c_id = Esi.get_corp_id(corp)
-    s_id = Esi.get_item_id(ship)
-    await bot.say(corp + "'s " + ship + ": " + Zkbf.get_last_fit(s_id, c_id))
-
 
 # Fuel commands **********************************************
 

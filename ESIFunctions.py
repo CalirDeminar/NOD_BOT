@@ -10,27 +10,22 @@ def get_corp_id(name):
     :param name: The full corp name, or corp ticker, to be searched for
     :return: The corp_id for the specified corp
     """
-    try:
-        print("Getting Corp ID")
+    print("Getting Corp ID")
 
-        fixed_name = (name.replace(" ", "%20")).replace("-", "%2D")
-        print(fixed_name)
-        # lookup corp ID from ESI
-        look_up_url = "https://esi.evetech.net/latest/" \
-                      "search/" \
-                      "?categories=corporation&" \
-                      "datasource=tranquility&" + \
-                      "language=en-us&" \
-                      "search=" + fixed_name + \
-                      "&strict=true"
-        # store lookup result
-        search_res = urllib.request.urlopen(look_up_url)
-        # strip square brackets and store as string
-        return str(json.loads(search_res.read().decode())["corporation"]).strip("[").strip("]")
-    except urllib.error.HTTPError:
-        return "ESI Not Responding"
-    except urllib.error.URLError:
-        return "Corp Not Found"
+    fixed_name = (name.replace(" ", "%20")).replace("-", "%2D")
+    print(fixed_name)
+    # lookup corp ID from ESI
+    look_up_url = "https://esi.evetech.net/latest/" \
+                  "search/" \
+                  "?categories=corporation&" \
+                  "datasource=tranquility&" + \
+                  "language=en-us&" \
+                  "search=" + fixed_name + \
+                  "&strict=true"
+    # store lookup result
+    search_res = urllib.request.urlopen(look_up_url)
+    # strip square brackets and store as string
+    return str(json.loads(search_res.read().decode())["corporation"]).strip("[").strip("]")
 
 
 def get_char_id(name):
@@ -96,14 +91,8 @@ def get_item_id(name):
                   "language=en-us&" \
                   "search=" + fixed_name + \
                   "&strict=true"
-    try:
-        search_res = urllib.request.urlopen(look_up_url)
-        data = json.loads(search_res.read().decode())
-        return str((data["inventory_type"])).lstrip("[").rstrip("]")
 
-    except urllib.error.HTTPError:
-        return "ESI Not Responding"
-    except urllib.error.URLError:
-        return "Item Not Found"
-
+    search_res = urllib.request.urlopen(look_up_url)
+    data = json.loads(search_res.read().decode())
+    return str((data["inventory_type"])).lstrip("[").rstrip("]")
 
