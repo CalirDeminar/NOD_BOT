@@ -9,7 +9,7 @@ from collections import defaultdict
 import ESIFunctions as Esi
 
 
-def get_corp_current_month_stats(name, corp_id):
+def get_corp_current_month_stats(name):
     """
     Calculates the total number of corp member kills and value of said corp's kills within the current month.
     Retrieves the kill history for the current month and calculates total kills and total worth of said kills
@@ -19,10 +19,15 @@ def get_corp_current_month_stats(name, corp_id):
         final-blow kills only - to limit kill-whoring skewing results
 
     :param name: The full corp name or corp ticker, to look up
-    :param corp_id:
     :return: Statistics string to be displayed
     """
     # construct Zkill Stat query
+    try:
+        corp_id = Esi.get_corp_id(name)
+    except Esi.urllib.error.HTTPError:
+        return "ESI Not Responding"
+    except (Esi.urllib.error.URLError, KeyError):
+        return "Corp Not Found"
 
     try:
         print("Getting Corp Current Month Stats")
@@ -50,14 +55,13 @@ def get_corp_current_month_stats(name, corp_id):
                ":**__   __Total Kills:__ " + str(total_kills) + \
                "   __Total Isk Killed:__ " + '{0:,.2f}'.format(total_isk) + \
                " isk\n"
-
     except TypeError:
         return "**LookUp Error**"
     except urllib.error.HTTPError:
         return "Zkill Not Responding"
 
 
-def get_killer_summary(list_range, name, corp_id):
+def get_killer_summary(list_range, name):
     """
     Generates a list of the top "list_range" ships used in PvP by the specified corp.
     The kill history of a corp is requested from zkillboard, for the current year
@@ -70,9 +74,15 @@ def get_killer_summary(list_range, name, corp_id):
 
     :param list_range: The maximum size of the returned list
     :param name: The full corp name or corp ticker, to look up
-    :param corp_id:
     :return: Statistics string to be displayed
     """
+    try:
+        corp_id = Esi.get_corp_id(name)
+    except Esi.urllib.error.HTTPError:
+        return "ESI Not Responding"
+    except (Esi.urllib.error.URLError, KeyError):
+        return "Corp Not Found"
+
     try:
         print("Getting Corp Killer Summary")
         id_set = []
@@ -140,7 +150,7 @@ def get_killer_summary(list_range, name, corp_id):
         return "Zkill Not Responding"
 
 
-def get_fleet_size_stats(name, corp_id):
+def get_fleet_size_stats(name):
     """
     Calculates fleet size statistics for a specified corp ID
     Checks number of specified corp_members of each corp kill
@@ -150,9 +160,15 @@ def get_fleet_size_stats(name, corp_id):
 
 
     :param name: Corp name to be contained in output string (passed so ESI doesnt have to be called)
-    :param corp_id: Corp ID to be processed (passed so ESI doesnt have to be called)
     :return: Output String to be displayed
     """
+    try:
+        corp_id = Esi.get_corp_id(name)
+    except Esi.urllib.error.HTTPError:
+        return "ESI Not Responding"
+    except (Esi.urllib.error.URLError, KeyError):
+        return "Corp Not Found"
+
     print("Getting Fleet Size Stats")
     try:
         # construct Zkill Stat query
@@ -206,13 +222,42 @@ def get_fleet_size_stats(name, corp_id):
         return "Zkill Not Responding"
 
 
-def get_last_fit(ship, corp_id):
+def get_intel(name):
+    """
+    Macro function of get_corp_current_month_stats
+                      get_fleet_size_stats and
+                      get_killer_summary
+    :param name: corp name to look up
+    :return:  output string to be printed
+    """
+    output = ""
+    output += get_corp_current_month_stats(name) + "\n"
+    if output == "Corp Not Found\n":
+        return output
+    output += get_fleet_size_stats(name) + "\n"
+    output += get_killer_summary(5, name) + "\n"
+    return output
+
+
+def get_last_fit(ship, name):
     """
     Generate a zkillboard link to the last of the specified ship from the specified corp
     :param ship: Name of ship to search for
-    :param corp_id: Corp to limit search within
+    :param name: Corp name to limit search within
     :return: Zkillboard killmail URL
     """
+    try:
+        corp_id = Esi.get_corp_id(name)
+    except Esi.urllib.error.HTTPError:
+        return "ESI Not Responding"
+    except (Esi.urllib.error.URLError, KeyError):
+        return "Corp Not Found"
+    try:
+        ship_id = Esi.get_item_id(ship)
+    except Esi.urllib.error.HTTPError:
+        return "ESI Not Responding"
+    except (Esi.urllib.error.URLError, KeyError):
+        return "Ship Not Found"
     try:
         print("getting corp's ship fit")
         # construct Zkill Stat query
@@ -220,14 +265,15 @@ def get_last_fit(ship, corp_id):
                  "corporationID/" + corp_id + \
                  "/w-space/" + \
                  "year/" + str(datetime.date.today().year) + \
-                 "/losses/ship/" + ship + "/"
+                 "/losses/shipID/" + ship_id + "/"
 
+        print(kb_url)
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
         # convert zkill output
         data = json.loads(kb_sum.read().decode())
         kill_id = data[0]["killmail_id"]
-        return "https://zkillboard.com/kill/" + str(kill_id) + "/"
+        return name + "'s " + ship + ": https://zkillboard.com/kill/" + str(kill_id) + "/"
     except KeyError:
         return "**LookUp Error**"
     except urllib.error.HTTPError:

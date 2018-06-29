@@ -5,7 +5,6 @@ import discord
 from discord.ext import commands
 
 import BotFunctions as bf
-import ESIFunctions as Esi
 import FuelTracker
 import FuzzworksFunctions as Fzw
 import ZkillFunctions as Zkbf
@@ -51,35 +50,17 @@ async def upTime():
 
 @bot.command()
 async def kills(*, corp_name):
-    try:
-        c_id = Esi.get_corp_id(corp_name)
-        await bot.say(Zkbf.get_corp_current_month_stats(corp_name, c_id))
-    except Esi.urllib.error.HTTPError:
-        await bot.say("ESI Not Responding")
-    except (Esi.urllib.error.URLError, KeyError):
-        await bot.say("Corp Not Found")
+    await bot.say(Zkbf.get_corp_current_month_stats(corp_name))
 
 
 @bot.command()
 async def ships(amount: int, *, corp_name):
-    try:
-        c_id = Esi.get_corp_id(corp_name)
-        await bot.say(Zkbf.get_killer_summary(amount, corp_name, c_id))
-    except Esi.urllib.error.HTTPError:
-        await bot.say("ESI Not Responding")
-    except (Esi.urllib.error.URLError, KeyError):
-        await bot.say("Corp Not Found")
+    await bot.say(Zkbf.get_killer_summary(amount, corp_name))
 
 
 @bot.command()
 async def stats(*, corp_name):
-    try:
-        c_id = Esi.get_corp_id(corp_name)
-        await bot.say(Zkbf.get_fleet_size_stats(corp_name, c_id))
-    except Esi.urllib.error.HTTPError:
-        await bot.say("ESI Not Responding")
-    except (Esi.urllib.error.URLError, KeyError):
-        await bot.say("Corp Not Found")
+    await bot.say(Zkbf.get_fleet_size_stats(corp_name))
 
 
 @bot.command()
@@ -89,29 +70,12 @@ async def rankings():
 
 @bot.command()
 async def intel(*, corp_name):
-    try:
-        c_id = Esi.get_corp_id(corp_name)
-        output = ""
-        output += Zkbf.get_corp_current_month_stats(corp_name, c_id) + "\n"
-        output += Zkbf.get_fleet_size_stats(corp_name, c_id) + "\n"
-        output += Zkbf.get_killer_summary(5, corp_name, c_id) + "\n"
-        await bot.say(output)
-    except Esi.urllib.error.HTTPError:
-        await bot.say("ESI Not Responding")
-    except (Esi.urllib.error.URLError, KeyError):
-        await bot.say("Corp Not Found")
+    await bot.say(Zkbf.get_intel(corp_name))
 
 
 @bot.command()
 async def fit(ship: str, *, corp):
-    try:
-        c_id = Esi.get_corp_id(corp)
-        s_id = Esi.get_item_id(ship)
-        await bot.say(corp + "'s " + ship + ": " + Zkbf.get_last_fit(s_id, c_id))
-    except Esi.urllib.error.HTTPError:
-        await bot.say("ESI Not Responding")
-    except (Esi.urllib.error.URLError, KeyError):
-        await bot.say("Corp or Ship Not Found")
+    await bot.say(Zkbf.get_last_fit(ship, corp))
 
 
 # market functions
