@@ -1,6 +1,5 @@
 import re
 
-import ESIFunctions as Esi
 import ZkillFunctions as Zkbf
 
 
@@ -21,13 +20,7 @@ def get_ranked_isk_killed():
     rankings = {}
     outputs = {}
     for corp_name in corp_list:
-        try:
-            c_id = Esi.get_corp_id(corp_name)
-        except TypeError:
-            return "**LookUp Error**"
-        except Esi.urllib.error.HTTPError:
-            return "ESI Not Responding"
-        temp = Zkbf.get_corp_current_month_stats(corp_name, c_id)
+        temp = Zkbf.get_corp_current_month_stats(corp_name)
         outputs[str(corp_name)] = str(temp)
         sub_string_start = temp.find("Killed:__ ")
         sub_string_end = temp.find(" isk")
