@@ -210,6 +210,7 @@ def get_fleet_size_stats(name):
 
         avg = avg_total / total_kills  # calculate mean fleet size
 
+        # construct output string
         output = "__**Fleet Statistics:**__\n"
         output += "__Maximum Fleet Size:__  " + str(max_k) + "\n"
         output += "__Minimum Fleet Size:__  " + str(min_k) + "\n"

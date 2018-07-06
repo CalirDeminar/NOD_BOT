@@ -16,16 +16,11 @@ fuel_tracker = FuelTracker.FuelTracker()
 
 online_time = datetime.datetime.now()
 
+# bot channel ID
 channel = discord.Object(id='449651065051283476')
 
 
-# background fuel checker
-async def fuelAlert():
-    await bot.wait_until_ready()
-    while not bot.is_closed():
-        output = fuel_tracker.fuel_status()
-        bot.send_message(channel, output)
-        await asyncio.sleep(3600)
+alertRunning = False
 
 
 @bot.event
@@ -34,6 +29,8 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+
 
 
 @bot.command()
@@ -118,10 +115,25 @@ async def fuelReport():
     await bot.say(fuel_tracker.fuel_status())
 
 
+# background fuel checker
 @bot.command()
-async def setUp():
-    fuel_tracker.add_structure("astra", 180)
-    fuel_tracker.add_structure("fort", 320)
+@commands.has_role("Director")
+async def fuelAlert():
+    while True:
+
+        output = fuel_tracker.fuel_status()
+        await bot.say(output)
+
+        now = datetime.datetime.now()
+        target_time = datetime.timedelta(microseconds=-now.microsecond,
+                                         seconds=-now.second,
+                                         minutes=-now.minute,
+                                         hours=15 - now.hour)
+        if now.hour > 15:
+            target_time += datetime.timedelta(days=1)
+
+        await asyncio.sleep(target_time.seconds)
+
 
 
 @bot.event
