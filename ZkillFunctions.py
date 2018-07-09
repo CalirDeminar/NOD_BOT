@@ -31,7 +31,7 @@ def get_corp_current_month_stats(name):
 
     try:
         print("Getting Corp Current Month Stats")
-        kb_url = "https://zkillboard.com/api/stats/" \
+        kb_url = "https://zkillboard.com/api/" \
                  "corporationID/" + corp_id + \
                  "/w-space/" \
                  "year/" + str(datetime.date.today().year) + \
@@ -87,7 +87,7 @@ def get_killer_summary(list_range, name):
         print("Getting Corp Killer Summary")
         id_set = []
         # construct Zkill Stat query
-        kb_url = "https://zkillboard.com/api/stats/" + \
+        kb_url = "https://zkillboard.com/api/" + \
                  "corporationID/" + corp_id + \
                  "/w-space/" + \
                  "year/" + str(datetime.date.today().year) + \
@@ -172,7 +172,7 @@ def get_fleet_size_stats(name):
     print("Getting Fleet Size Stats")
     try:
         # construct Zkill Stat query
-        kb_url = "https://zkillboard.com/api/stats/" + \
+        kb_url = "https://zkillboard.com/api/" + \
                  "corporationID/" + corp_id + \
                  "/w-space/" + \
                  "year/" + str(datetime.date.today().year) + \
@@ -262,7 +262,7 @@ def get_last_fit(ship, name):
     try:
         print("getting corp's ship fit")
         # construct Zkill Stat query
-        kb_url = "https://zkillboard.com/api/stats/" + \
+        kb_url = "https://zkillboard.com/api/" + \
                  "corporationID/" + corp_id + \
                  "/w-space/" + \
                  "year/" + str(datetime.date.today().year) + \
