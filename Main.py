@@ -36,44 +36,44 @@ async def on_ready():
 
 @bot.command()
 async def ping(ctx):
-    await bot.say("pong")
+    await ctx.send("pong")
 
 
 @bot.command()
-async def upTime():
-    await bot.say("Online for: " + str(datetime.datetime.now() - online_time))
+async def upTime(ctx):
+    await ctx.send("Online for: " + str(datetime.datetime.now() - online_time))
 
 # zkill related functions
 
 
 @bot.command()
 async def kills(ctx, *, corp_name):
-    await bot.say(Zkbf.get_corp_current_month_stats(corp_name))
+    await ctx.send(Zkbf.get_corp_current_month_stats(corp_name))
 
 
 @bot.command()
 async def ships(ctx, amount: int, *, corp_name):
-    await bot.say(Zkbf.get_killer_summary(amount, corp_name))
+    await ctx.send(Zkbf.get_killer_summary(amount, corp_name))
 
 
 @bot.command()
 async def stats(ctx, *, corp_name):
-    await bot.say(Zkbf.get_fleet_size_stats(corp_name))
+    await ctx.send(Zkbf.get_fleet_size_stats(corp_name))
 
 
 @bot.command()
 async def rankings(ctx):
-    await bot.say(bf.get_ranked_isk_killed())
+    await ctx.send(bf.get_ranked_isk_killed())
 
 
 @bot.command()
 async def intel(ctx, *, corp_name):
-    await bot.say(Zkbf.get_intel(corp_name))
+    await ctx.send(Zkbf.get_intel(corp_name))
 
 
 @bot.command()
 async def fit(ctx, ship: str, *, corp):
-    await bot.say(Zkbf.get_last_fit(ship, corp))
+    await ctx.send(Zkbf.get_last_fit(ship, corp))
 
 
 # market functions
@@ -81,39 +81,39 @@ async def fit(ctx, ship: str, *, corp):
 
 @bot.command()
 async def pc(ctx, *, a):
-    await bot.say(Fzw.get_item_value(a))
+    await ctx.send(Fzw.get_item_value(a))
 
 
 @bot.command()
 async def fuel(ctx):
-    await bot.say(Fzw.get_fuel_prices())
+    await ctx.send(Fzw.get_fuel_prices())
 
 # Fuel commands **********************************************
 
 
 @bot.command()
 async def addStructure(ctx, name: str, consumption):
-    await bot.say(fuel_tracker.add_structure(name, consumption))
+    await ctx.send(fuel_tracker.add_structure(name, consumption))
 
 
 @bot.command()
 async def updateStructure(ctx, name: str, consumption):
-    await bot.say(fuel_tracker.update_structure(name, consumption))
+    await ctx.send(fuel_tracker.update_structure(name, consumption))
 
 
 @bot.command()
 async def listStructures(ctx):
-    await bot.say(fuel_tracker.list_structures())
+    await ctx.send(fuel_tracker.list_structures())
 
 
 @bot.command()
 async def updateFuel(ctx, name: str, amount):
-    await bot.say(fuel_tracker.update_fuel(name, amount))
+    await ctx.send(fuel_tracker.update_fuel(name, amount))
 
 
 @bot.command()
 async def fuelReport(ctx):
-    await bot.say(fuel_tracker.fuel_status())
+    await ctx.send(fuel_tracker.fuel_status())
 
 
 # background fuel checker
@@ -123,7 +123,7 @@ async def fuelAlert(ctx):
     while True:
 
         output = fuel_tracker.fuel_status()
-        await bot.say(output)
+        await ctx.send(output)
 
         now = datetime.datetime.now()
         target_time = datetime.timedelta(microseconds=-now.microsecond,
