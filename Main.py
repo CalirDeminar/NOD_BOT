@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import asyncio
 import datetime
 
@@ -34,7 +35,7 @@ async def on_ready():
 
 
 @bot.command()
-async def ping():
+async def ping(ctx):
     await bot.say("pong")
 
 
@@ -46,32 +47,32 @@ async def upTime():
 
 
 @bot.command()
-async def kills(*, corp_name):
+async def kills(ctx, *, corp_name):
     await bot.say(Zkbf.get_corp_current_month_stats(corp_name))
 
 
 @bot.command()
-async def ships(amount: int, *, corp_name):
+async def ships(ctx, amount: int, *, corp_name):
     await bot.say(Zkbf.get_killer_summary(amount, corp_name))
 
 
 @bot.command()
-async def stats(*, corp_name):
+async def stats(ctx, *, corp_name):
     await bot.say(Zkbf.get_fleet_size_stats(corp_name))
 
 
 @bot.command()
-async def rankings():
+async def rankings(ctx):
     await bot.say(bf.get_ranked_isk_killed())
 
 
 @bot.command()
-async def intel(*, corp_name):
+async def intel(ctx, *, corp_name):
     await bot.say(Zkbf.get_intel(corp_name))
 
 
 @bot.command()
-async def fit(ship: str, *, corp):
+async def fit(ctx, ship: str, *, corp):
     await bot.say(Zkbf.get_last_fit(ship, corp))
 
 
@@ -79,46 +80,46 @@ async def fit(ship: str, *, corp):
 
 
 @bot.command()
-async def pc(*, a):
+async def pc(ctx, *, a):
     await bot.say(Fzw.get_item_value(a))
 
 
 @bot.command()
-async def fuel():
+async def fuel(ctx):
     await bot.say(Fzw.get_fuel_prices())
 
 # Fuel commands **********************************************
 
 
 @bot.command()
-async def addStructure(name: str, consumption):
+async def addStructure(ctx, name: str, consumption):
     await bot.say(fuel_tracker.add_structure(name, consumption))
 
 
 @bot.command()
-async def updateStructure(name: str, consumption):
+async def updateStructure(ctx, name: str, consumption):
     await bot.say(fuel_tracker.update_structure(name, consumption))
 
 
 @bot.command()
-async def listStructures():
+async def listStructures(ctx):
     await bot.say(fuel_tracker.list_structures())
 
 
 @bot.command()
-async def updateFuel(name: str, amount):
+async def updateFuel(ctx, name: str, amount):
     await bot.say(fuel_tracker.update_fuel(name, amount))
 
 
 @bot.command()
-async def fuelReport():
+async def fuelReport(ctx):
     await bot.say(fuel_tracker.fuel_status())
 
 
 # background fuel checker
 @bot.command()
 @commands.has_role("Director")
-async def fuelAlert():
+async def fuelAlert(ctx):
     while True:
 
         output = fuel_tracker.fuel_status()
