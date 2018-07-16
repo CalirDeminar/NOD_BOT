@@ -119,7 +119,7 @@ class FuelTracker:
                 # store fuel expiry date
                 print("writing")
                 cur = conn.cursor()
-                cur.execute("UPDATE structures SET expiry_date=?", (un_fueled,))
+                cur.execute("UPDATE structures SET expiry_date=? WHERE name = ?", (un_fueled, name))
                 conn.commit()
                 conn.close()
                 return "Structure: " + name + " Updated"
