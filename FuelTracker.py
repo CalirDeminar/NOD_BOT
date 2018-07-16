@@ -1,12 +1,31 @@
 import datetime
+import sqlite3
+from sqlite3 import Error
+
 
 class FuelTracker:
 
     structures = {}  # list tracking structure name and structure consumption rate
     fuelTimers = {}  # list tracking structure name and fuel run out datetime
 
+
+    DB = "Data/Structure_Data"
+
+    sql_create_structures_table = """CREATE TABLE IF NOT EXISTS structures (
+                                     name text PRIMARY KEY,
+                                     consumption_rate integer NOT NULL,
+                                     expiry_date real
+                                     );"""
+
     def __init__(self):
-        self.read_from_file()
+        conn = create_connection(self.DB)
+        if conn is not None:
+            # create structures table
+            create_table(conn, self.sql_create_structures_table)
+            print("DB connected")
+        else:
+            print("Error, database not found")
+        conn.close()
 
     def add_structure(self, name: str, consumption):
         """
@@ -16,16 +35,20 @@ class FuelTracker:
         :param consumption: Fuel blocks consumed per day (numbers only)
         :return: Status of structure addition
         """
-        try:
-            if name not in self.structures:
-                self.structures[name] = int(consumption)
-
-                self.write_to_file()
-                return "Structure: " + name + " added"
-            else:
-                return "This Structure already exists"
-        except ValueError:
-                return "Consumption rate must be a number"
+        conn = create_connection(self.DB)
+        # check if exists
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM structures WHERE name=?",(name,))
+        data = cur.fetchall()
+        if len(data) == 0:
+            # add structure to db
+            cur = conn.cursor()
+            cur.execute("INSERT INTO structures VALUES(?,?,?)", (name, int(consumption), None))
+            conn.commit()
+            conn.close()
+            return "Structure: " + name + " added"
+        else:
+            return "This Structure Already Exists"
 
     def update_structure(self, name: str, consumption):
         """
@@ -35,14 +58,23 @@ class FuelTracker:
         :param consumption:  New consumption rate of specified structure
         :return: Status of the structure update
         """
+        if consumption == 0:
+            return "Consumption rate must be > 0"
         try:
-            if name in self.structures:
-                self.structures[name] = int(consumption)
-
-                self.write_to_file()
-                return "Structure: " + name + " updated"
-            else:
-                return "This structure does not exist"
+            conn = create_connection(self.DB)
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM structures WHERE name=?", (name,))
+            data = cur.fetchall()
+            if len(data) == 0:  # no matching structure found
+                return "Structure Not Found"
+            elif len(data) == 1:  # structure found (once), updating
+                cur = conn.cursor()
+                cur.execute("UPDATE structures SET consumption_rate=?", (consumption,))
+                conn.commit()
+                conn.close()
+                return "Structure: " + name + " Updated"
+            elif len(data) > 1:  # structure found more than once?!?
+                return "You have somehow cloned a structure, how in the hell did you manage that!"
         except ValueError:
                 return "Consumption rate must be a number"
 
@@ -52,9 +84,14 @@ class FuelTracker:
 
         :return: List of structures and consumption rates in format of: "structure name": "structure consumption rate"
         """
+        conn = create_connection(self.DB)
+        cur = conn.cursor()
+        cur.execute("SELECT name, consumption_rate FROM structures")
+        data = cur.fetchall()
         output = ""
-        for structure in self.structures:
-            output += structure + ": " + str(self.structures[structure]) + "\n"
+        for structure in data:
+            output += str(structure[0]) + ": "
+            output += str(structure[1]) + "\n"
         return output
 
     def update_fuel(self, name: str, amount):
@@ -68,16 +105,27 @@ class FuelTracker:
         :return:  Status of the fuel update
         """
         try:
-            if name in self.structures:
-                days_remaining = int(amount) / self.structures[name]
+            conn = create_connection(self.DB)
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM structures WHERE name=?", (name,))
+            data = cur.fetchall()
+            if len(data) == 0:  # no matching structure found
+                return "Structure Not Found"
+            elif len(data) == 1:  # structure found (once), updating
+                print("projecting")
+                #  fuel projection
+                days_remaining = int(amount) / data[0][1]
                 now = datetime.datetime.now()
                 un_fueled = now + datetime.timedelta(days=days_remaining)
-                self.fuelTimers[name] = un_fueled
-
-                self.write_to_file()
-                return "Structure: " + str(name) + "- Fuel level updated"
-            else:
-                return "This structure does not exist"
+                # store fuel expiry date
+                print("writing")
+                cur = conn.cursor()
+                cur.execute("UPDATE structures SET expiry_date=?", (un_fueled,))
+                conn.commit()
+                conn.close()
+                return "Structure: " + name + " Updated"
+            elif len(data) > 1:  # structure found more than once?!?
+                return "You have somehow cloned a structure, how in the hell did you manage that!"
         except ValueError:
                 return "Fuel amount must be a number"
 
@@ -86,11 +134,22 @@ class FuelTracker:
         Generate a list of existing structures and the fueled time remaining for each
         :return:  list of structures and fuel-out times in format of "structure name": "time remaining"
         """
+        print("initial")
+        conn = create_connection(self.DB)
+        cur = conn.cursor()
+        cur.execute('SELECT name, date(expiry_date), time(expiry_date) FROM structures')
+        data = cur.fetchall()
         output = ""
         now = datetime.datetime.now()
-        for fuel_timer in self.fuelTimers:
-            temp = self.fuelTimers[fuel_timer]
-            output += "**" + fuel_timer + ":** "
+        print("pre-loop")
+        for structure in data:
+            print(structure)
+
+            name = structure[0]
+            print(name)
+            temp = datetime.datetime.strptime(structure[1] + structure[2], "%Y-%m-%d%H:%M:%S")
+            print(temp)
+            output += "**" + name + ":** "
             delta = temp - now
             if delta.days < 1:
                 output += "__Sub 1 Day of Fuel__: " + str(delta)[:8] + " remaining"
@@ -101,34 +160,31 @@ class FuelTracker:
         else:
             return output
 
-    def read_from_file(self):
-        """
-        Update structures and structure fueled dates from file
-        :return: void
-        """
-        file = open("Data/FuelData", "r")
-        for line in file:
-            contents = line.split("#")
-            temp_name = contents[0]
-            self.structures[temp_name] = int(contents[1])
-            self.fuelTimers[temp_name] = datetime.datetime.strptime(contents[2],'%Y-%m-%d %H:%M:%S.%f')
-        file.close()
 
-    def write_to_file(self):
-        """
-        Write current set of structures, consumption rates and fueled dates to file
-        :return: void
-        """
-        output = ""
-        file = open("Data/FuelData", "w")
-        for structure in self.structures:
-            try:
-                output += str(structure) + "#"
-                output += str(self.structures[structure]) + "#"
-                output += str(self.fuelTimers[structure]) + "#\n"
-            except KeyError:
-                print(self.structures)
-                print(self.fuelTimers)
-                print("Redundant Entry?")
-        file.write(output)
-        file.close()
+def create_connection(db_file):
+    """
+    Creates a database connection to SQLite database
+    :param db_file: file to connect to
+    :return: connection object or none
+    """
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+
+    return None
+
+
+def create_table(conn, create_table_sql):
+    """
+    Create a table from the current_table_aql statement
+    :param conn: connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)

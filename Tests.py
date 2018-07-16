@@ -1,3 +1,3 @@
-import BotFunctions
+import datetime
 
-print(BotFunctions.get_ranked_isk_killed())
+print(datetime.datetime.strptime('2018-08-13' + '06:26:04', "%Y-%m-%d%H:%M:%S"))
