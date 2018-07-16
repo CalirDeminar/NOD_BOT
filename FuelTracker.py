@@ -8,7 +8,6 @@ class FuelTracker:
     structures = {}  # list tracking structure name and structure consumption rate
     fuelTimers = {}  # list tracking structure name and fuel run out datetime
 
-
     DB = "Data/Structure_Data"
 
     sql_create_structures_table = """CREATE TABLE IF NOT EXISTS structures (
@@ -134,14 +133,12 @@ class FuelTracker:
         Generate a list of existing structures and the fueled time remaining for each
         :return:  list of structures and fuel-out times in format of "structure name": "time remaining"
         """
-        print("initial")
         conn = create_connection(self.DB)
         cur = conn.cursor()
         cur.execute('SELECT name, date(expiry_date), time(expiry_date) FROM structures')
         data = cur.fetchall()
         output = ""
         now = datetime.datetime.now()
-        print("pre-loop")
         for structure in data:
             print(structure)
 
