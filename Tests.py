@@ -1,3 +1,11 @@
-import datetime
+import FuelTracker
+ft = FuelTracker.FuelTracker()
 
-print(datetime.datetime.strptime('2018-08-13' + '06:26:04', "%Y-%m-%d%H:%M:%S"))
+ft.update_structure("astra", 20)
+ft.update_structure("fort", 50)
+
+
+ft.update_structure("athanor", 10)
+
+print(ft.list_structures())
+#print(ft.fuel_status())

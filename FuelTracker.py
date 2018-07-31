@@ -68,7 +68,7 @@ class FuelTracker:
                 return "Structure Not Found"
             elif len(data) == 1:  # structure found (once), updating
                 cur = conn.cursor()
-                cur.execute("UPDATE structures SET consumption_rate=?", (consumption,))
+                cur.execute("UPDATE structures SET consumption_rate=? WHERE name =?", (consumption, name))
                 conn.commit()
                 conn.close()
                 return "Structure: " + name + " Updated"
