@@ -28,15 +28,15 @@ def get_corp_current_month_stats(name):
         return "ESI Not Responding"
     except (Esi.urllib.error.URLError, KeyError):
         return "Corp Not Found"
-
+    now = datetime.date.today()
     try:
         print("Getting Corp Current Month Stats")
         kb_url = "https://zkillboard.com/api/" \
                  "corporationID/" + corp_id + \
                  "/w-space/" \
-                 "year/" + str(datetime.date.today().year) + \
-                 "/month/" + str(datetime.date.today().month) + \
+                 "startTime/" + str(now.year) + str('{:02d}'.format(now.month)) + "000000" \
                  "/kills/finalblow-only/"
+        print(kb_url)
         # store zkill stat result
         kb_sum = urllib.request.urlopen(kb_url)
         # convert zkill output

@@ -1,11 +1,3 @@
-import FuelTracker
-ft = FuelTracker.FuelTracker()
+import BotFunctions
 
-ft.update_structure("astra", 20)
-ft.update_structure("fort", 50)
-
-
-ft.update_structure("athanor", 10)
-
-print(ft.list_structures())
-#print(ft.fuel_status())
+print(BotFunctions.get_ranked_isk_killed())

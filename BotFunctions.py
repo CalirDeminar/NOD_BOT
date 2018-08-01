@@ -1,7 +1,10 @@
+import datetime
 import re
+import sqlite3
 
 import ZkillFunctions as Zkbf
 
+DB = "Data/Structure_Data"
 
 def get_ranked_isk_killed():
     """
@@ -30,3 +33,49 @@ def get_ranked_isk_killed():
     for item in sorted(rankings, reverse=True):
         output += outputs[rankings[item]] + "\n"
     return output
+
+
+def roll_out_init():
+    """
+    Check database connection and initialise rollOut table if not exists
+    :return: None
+    """
+    sql_create_table = """CREATE TABLE IF NOT EXISTS rollOut (
+                          date real PRIMARY KEY,
+                          name text NOT NULL);"""
+    conn = sqlite3.connect(DB)
+    if conn is not None:
+        # create structures table
+        c = conn.cursor()
+        c.execute(sql_create_table)
+        print("DB connected")
+    else:
+        print("Error, database not found")
+    conn.close()
+
+
+def get_rolled_out_date():
+    conn = sqlite3.connect(DB)
+    cur = conn.cursor()
+    cur.execute("SELECT date(date)"
+                "FROM rollOut "
+                "ORDER BY date DESC "
+                "LIMIT 1")
+    data = cur.fetchall()
+    conn.close()
+    print(str(data[0]))
+    temp = datetime.datetime.strptime(str(data[0]), "('%Y-%m-%d',)")
+    delta = datetime.datetime.now() - temp
+    return "Days Since Last RollOut: " + str(delta.days)
+
+
+def update_rolled_out(name: str):
+    conn = sqlite3.connect(DB)
+    cur = conn.cursor()
+    now = datetime.datetime.now()
+    cur.execute("INSERT INTO rollOut "
+                "VALUES (?,?)", (now, name))
+    conn.commit()
+    conn.close()
+    return "RollOut Clock Reset"
+

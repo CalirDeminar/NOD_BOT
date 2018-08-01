@@ -29,6 +29,7 @@ async def on_ready():
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
+    print(bf.roll_out_init())
     print('------')
 
 
@@ -135,6 +136,17 @@ async def fuelAlert(ctx):
 
         await asyncio.sleep(target_time.seconds)
 
+# Rollout Tracker ---------------------------------
+
+
+@bot.command()
+async def rolled(ctx, name: str):
+    await ctx.send(bf.update_rolled_out(name))
+
+
+@bot.command()
+async def lastRolled(ctx):
+    await ctx.send(bf.get_rolled_out_date())
 
 
 @bot.event
