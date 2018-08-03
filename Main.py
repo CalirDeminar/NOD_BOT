@@ -12,6 +12,7 @@ import ZkillFunctions as Zkbf
 
 tokenFile = open('token', 'r')
 token = tokenFile.read()
+token = token.rstrip()
 bot = commands.Bot(command_prefix='!')
 
 fuel_tracker = FuelTracker.FuelTracker()
