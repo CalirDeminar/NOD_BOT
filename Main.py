@@ -10,7 +10,8 @@ import FuelTracker
 import FuzzworksFunctions as Fzw
 import ZkillFunctions as Zkbf
 
-token = 'NDQ4ODU2MTExNjcyNTkwMzQ3.Decl9w.3O1LF-B8UAxZGWupqPSYSiMJiMo'
+tokenFile = open('token', 'r')
+token = tokenFile.read()
 bot = commands.Bot(command_prefix='!')
 
 fuel_tracker = FuelTracker.FuelTracker()
@@ -153,7 +154,7 @@ async def lastRolled(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         print("error")
-        bot.send_message(channel, "Command Not Found")
+        ctx.send("Command Not Found")
         return
 
 

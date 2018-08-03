@@ -55,6 +55,11 @@ def roll_out_init():
 
 
 def get_rolled_out_date():
+    """
+    Get the last rolled out date
+    :return: most recent rolled out date
+    """
+    # connect DB
     conn = sqlite3.connect(DB)
     cur = conn.cursor()
     cur.execute("SELECT date(date)"
@@ -70,6 +75,11 @@ def get_rolled_out_date():
 
 
 def update_rolled_out(name: str):
+    """
+    Add new rolled out entry with current time
+    :param name: name of pilot rolled out
+    :return: conformation of entry posting string
+    """
     conn = sqlite3.connect(DB)
     cur = conn.cursor()
     now = datetime.datetime.now()
