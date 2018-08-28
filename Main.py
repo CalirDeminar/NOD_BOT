@@ -156,7 +156,7 @@ async def lastRolled(ctx):
 async def batphone(ctx, ping_text):
     target_channel = "440447527905394689"
     # await ctx.send("Ping Sending")
-    await ctx.send_message(discord.Object(id=target_channel), "@everyone " + ping_text)
+    ctx.send_message(discord.Object(id=target_channel), "@everyone " + ping_text)
     # await ctx.send("Ping Sent")
 
 
