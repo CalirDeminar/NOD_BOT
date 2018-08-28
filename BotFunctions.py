@@ -6,6 +6,7 @@ import ZkillFunctions as Zkbf
 
 DB = "Data/Structure_Data"
 
+
 def get_ranked_isk_killed():
     """
     Get amount of isk killed by list of corps
@@ -14,9 +15,10 @@ def get_ranked_isk_killed():
     """
     corp_list = ["Mass Collapse",
                  "Nothing On D",
-                 "Interstellar Nuclear Penguins",
                  "Mind Collapse",
-                 "Hole Awareness"]
+                 "Hole Awareness",
+                 "EyEs.FR",
+                 "Wormhole Rats and Fromage"]
 
     output = ""
 

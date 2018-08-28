@@ -10,8 +10,11 @@ import FuelTracker
 import FuzzworksFunctions as Fzw
 import ZkillFunctions as Zkbf
 
+# get token from file
 tokenFile = open('token', 'r')
 token = tokenFile.read()
+# strip off any training whitespaces or newlines from end of file
+token = token.rstrip()
 bot = commands.Bot(command_prefix='!')
 
 fuel_tracker = FuelTracker.FuelTracker()
@@ -32,8 +35,6 @@ async def on_ready():
     print(bot.user.id)
     print(bf.roll_out_init())
     print('------')
-
-
 
 
 @bot.command()
@@ -150,12 +151,23 @@ async def lastRolled(ctx):
     await ctx.send(bf.get_rolled_out_date())
 
 
+# ping-command -----------------------------------
+@bot.command()
+async def batphone(ctx, source: discord.channel, ping_text):
+    target_channel = "440447527905394689"
+    await ctx.send("Ping Sending")
+    await ctx.send_message(discord.Object(id=target_channel), "@everyone " + ping_text)
+    await ctx.send("Ping Sent")
+
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        print("error")
-        ctx.send("Command Not Found")
+        print("Command Not Found")
+        bot.send_message(channel, "Command Not Found")
         return
+
+
 
 
 bot.run(token)
