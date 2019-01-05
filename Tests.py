@@ -1,3 +1,3 @@
-import BotFunctions
+import ZkillFunctions
 
-print(BotFunctions.get_ranked_isk_killed())
+print(ZkillFunctions.get_intel("SSAM."))

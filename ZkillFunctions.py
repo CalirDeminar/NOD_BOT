@@ -67,7 +67,7 @@ def get_corp_current_month_stats(name):
 
 
 def get_killer_summary(list_range, name):
-    """ ****** NOT DONE ******
+    """ ****** FIXED ******
     Generates a list of the top "list_range" ships used in PvP by the specified corp.
     The kill history of a corp is requested from zkillboard, for the current year
 
@@ -106,12 +106,7 @@ def get_killer_summary(list_range, name):
         # for every kill in output
         for kill in data:
             # for every attacker
-            print("per kill")
-            print(kill)
-            print("id" + kill.killmail_id)
-            print("hash" + kill.zkb.hash)
-            killmail = Esi.get_km(kill.killmail_id, kill.zkb.hash)
-            print("killmail got")
+            killmail = Esi.get_km(kill["killmail_id"], kill["zkb"]["hash"])
             for attacker in killmail["attackers"]:
                 try:
                     # check that attacker belongs to target corp
@@ -200,9 +195,10 @@ def get_fleet_size_stats(name):
         min_k = math.inf
 
         for kill in data:  # for every kill
+            killmail = Esi.get_km(kill["killmail_id"], kill["zkb"]["hash"])
             current_total = 0
             third_pty = 0
-            for attacker in kill["attackers"]:  # for every attacker
+            for attacker in killmail["attackers"]:  # for every attacker
                 try:
                     if int(attacker["corporation_id"]) == int(corp_id):  # increment only if attack is of target corp
                         current_total += 1

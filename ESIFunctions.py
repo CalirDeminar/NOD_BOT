@@ -99,11 +99,7 @@ def get_item_id(name):
 
 def get_km(km_id, km_hash):
     print("esi km retrieval running")
-    look_up_url = "https://esi.evetech.net/latest/killmails/" + km_id +\
-                  "/" + km_hash + "/"
-    print("pre-lookup")
+    look_up_url = "https://esi.evetech.net/latest/killmails/" + str(km_id) + "/" + str(km_hash) + "/"
     search_res = urllib.request.urlopen(look_up_url)
-    print("post-lookup")
     data = json.loads(search_res.read().decode())
-    print("post-decode")
     return data
