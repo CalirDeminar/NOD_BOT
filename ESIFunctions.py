@@ -96,3 +96,9 @@ def get_item_id(name):
     data = json.loads(search_res.read().decode())
     return str((data["inventory_type"])).lstrip("[").rstrip("]")
 
+def get_km(km_id, km_hash):
+    look_up_url = "https://esi.evetech.net/latest/" +\
+                  "killmails/" + km_id +\
+                  "/" + km_hash + "/"
+    search_res = urllib.request.urlopen(look_up_url)
+    data = json.loads(search_res.read().decode())

@@ -8,9 +8,14 @@ from collections import defaultdict
 
 import ESIFunctions as Esi
 
+DB = "Data/Structure_Data"
+
+
+
+
 
 def get_corp_current_month_stats(name):
-    """
+    """ ******FIXED******
     Calculates the total number of corp member kills and value of said corp's kills within the current month.
     Retrieves the kill history for the current month and calculates total kills and total worth of said kills
 
@@ -62,7 +67,7 @@ def get_corp_current_month_stats(name):
 
 
 def get_killer_summary(list_range, name):
-    """
+    """ ****** NOT DONE ******
     Generates a list of the top "list_range" ships used in PvP by the specified corp.
     The kill history of a corp is requested from zkillboard, for the current year
 
@@ -101,7 +106,8 @@ def get_killer_summary(list_range, name):
         # for every kill in output
         for kill in data:
             # for every attacker
-            for attacker in kill["attackers"]:
+            killmail = Esi.get_km(kill.killmail_id, kill.zkb.hash)
+            for attacker in killmail["attackers"]:
                 try:
                     # check that attacker belongs to target corp
                     if int(attacker["corporation_id"]) == int(corp_id):
@@ -279,4 +285,5 @@ def get_last_fit(ship, name):
         return "**LookUp Error**"
     except urllib.error.HTTPError:
         return "Zkill Not Responding"
+
 
