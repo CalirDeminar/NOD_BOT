@@ -100,5 +100,9 @@ def get_km(km_id, km_hash):
     look_up_url = "https://esi.evetech.net/latest/" +\
                   "killmails/" + km_id +\
                   "/" + km_hash + "/"
+    print("pre-lookup")
     search_res = urllib.request.urlopen(look_up_url)
+    print("post-lookup")
     data = json.loads(search_res.read().decode())
+    print("post-decode")
+    return data
