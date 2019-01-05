@@ -106,7 +106,8 @@ def get_killer_summary(list_range, name):
         # for every kill in output
         for kill in data:
             # for every attacker
-            print("pre-km-from-esi")
+            print(kill.killmail_id)
+            print(kill.kzb.hash)
             killmail = Esi.get_km(kill.killmail_id, kill.zkb.hash)
             print("killmail got")
             for attacker in killmail["attackers"]:
