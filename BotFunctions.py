@@ -83,11 +83,16 @@ def update_rolled_out(name: str):
     :return: conformation of entry posting string
     """
     conn = sqlite3.connect(DB)
+    print("Connected")
     cur = conn.cursor()
+    print("Cursor")
     now = datetime.datetime.now()
+    print("Got Now")
     cur.execute("INSERT INTO rollOut "
                 "VALUES (?,?)", (now, name))
+    print("Executed")
     conn.commit()
+    print("Committed")
     conn.close()
     return "RollOut Clock Reset"
 
