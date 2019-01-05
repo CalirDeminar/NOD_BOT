@@ -102,14 +102,14 @@ def get_killer_summary(list_range, name):
         kb_sum = urllib.request.urlopen(kb_url)
         # convert zkill output
         data = json.loads(kb_sum.read().decode())
-        print("Data Recvd")
-        print(data)
+
         # for every kill in output
         for kill in data:
             # for every attacker
             print("per kill")
+            print(kill)
             print(kill.killmail_id)
-            print(kill.kzb.hash)
+            print(kill.zkb.hash)
             killmail = Esi.get_km(kill.killmail_id, kill.zkb.hash)
             print("killmail got")
             for attacker in killmail["attackers"]:
