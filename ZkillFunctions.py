@@ -107,6 +107,7 @@ def get_killer_summary(list_range, name):
         for kill in data:
             # for every attacker
             killmail = Esi.get_km(kill.killmail_id, kill.zkb.hash)
+            print(killmail)
             for attacker in killmail["attackers"]:
                 try:
                     # check that attacker belongs to target corp
