@@ -102,7 +102,8 @@ def get_killer_summary(list_range, name):
         kb_sum = urllib.request.urlopen(kb_url)
         # convert zkill output
         data = json.loads(kb_sum.read().decode())
-
+        print("Data Recvd")
+        print(data)
         # for every kill in output
         for kill in data:
             # for every attacker
