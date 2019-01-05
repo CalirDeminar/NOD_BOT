@@ -103,12 +103,11 @@ def get_killer_summary(list_range, name):
         # convert zkill output
         data = json.loads(kb_sum.read().decode())
         print("Data Recvd")
-        print(data)
         # for every kill in output
         for kill in data:
             # for every attacker
             killmail = Esi.get_km(kill.killmail_id, kill.zkb.hash)
-            print(killmail)
+            print("killmail got")
             for attacker in killmail["attackers"]:
                 try:
                     # check that attacker belongs to target corp
