@@ -14,11 +14,12 @@ def get_ranked_isk_killed():
     :return: ordered string of corps and amount killed this month, to display
     """
     corp_list = ["Mass Collapse",
-                 "Nothing On D",
-                 "Mind Collapse",
+                 "OPSEC.",
                  "Hole Awareness",
                  "EyEs.FR",
-                 "Wormhole Rats and Fromage"]
+                 "Wormhole Rats and Fromage",
+                 "EPSYN",
+                 "Mind Games."]
 
     output = ""
 
@@ -83,16 +84,11 @@ def update_rolled_out(name: str):
     :return: conformation of entry posting string
     """
     conn = sqlite3.connect(DB)
-    print("Connected")
     cur = conn.cursor()
-    print("Cursor")
     now = datetime.datetime.now()
-    print("Got Now")
     cur.execute("INSERT INTO rollOut "
                 "VALUES (?,?)", (now, name))
-    print("Executed")
     conn.commit()
-    print("Committed")
     conn.close()
     return "RollOut Clock Reset"
 
